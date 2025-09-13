@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: SIH_innovation
+      auto-indexing: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    mongo:
+      enabled: true
