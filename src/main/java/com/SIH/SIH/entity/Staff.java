@@ -34,10 +34,12 @@ public class Staff {
     private String email;
 
     @NonNull
+    private String phoneNumber;
+    @NonNull
     private String department;
 
     private String designation;
-    private String phoneNumber;
+    private String city;
     private String officeLocation;
 
     private boolean active = true;
