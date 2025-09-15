@@ -24,6 +24,18 @@ public class Complaint {
     private String title;
 
     @NonNull
+    private Integer pincode;
+
+    @NonNull
+    private String city;
+
+    @NonNull
+    private String district;
+    @NonNull
+    private String state;
+
+
+    @NonNull
     private String description;
 
     @NonNull
@@ -38,6 +50,7 @@ public class Complaint {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
 
     private String userId;   // who raised it
     private String staffId;  // auto-assigned staff
