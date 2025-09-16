@@ -5,6 +5,8 @@ import com.SIH.SIH.entity.User;
 import com.SIH.SIH.services.UserService;
 import com.SIH.SIH.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,7 @@ public class PublicController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
+    @Qualifier("userAuthenticationManager")
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
@@ -48,7 +51,7 @@ public class PublicController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
             );
-            String token = jwtUtil.generateToken(user.getEmail());
+            String token = jwtUtil.generateToken(user.getEmail(),"USER");
             return new ResponseEntity<>(token, HttpStatus.OK);
         }catch (BadCredentialsException e){
             return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);

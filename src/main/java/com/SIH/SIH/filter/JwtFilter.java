@@ -1,5 +1,7 @@
 package com.SIH.SIH.filter;
 
+import com.SIH.SIH.services.StaffDetailServiceImpl;
+import com.SIH.SIH.services.UserDetailServiceImpl;
 import com.SIH.SIH.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +24,10 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailServiceImpl userDetailService;
+    @Autowired
+    StaffDetailServiceImpl staffDetailService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
@@ -32,15 +37,20 @@ public class JwtFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
         }
-        if(username!=null){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            String role = jwtUtil.extractRole(jwt);
+            UserDetails userDetails;
+            if ("STAFF".equals(role)) {
+                userDetails = staffDetailService.loadUserByUsername(username);
+            } else {
+                userDetails = userDetailService.loadUserByUsername(username);
+            }
             if(jwtUtil.validateToken(jwt,userDetails.getUsername())){
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-        response.addHeader("admin","milan");
         filterChain.doFilter(request,response);
     }
 }

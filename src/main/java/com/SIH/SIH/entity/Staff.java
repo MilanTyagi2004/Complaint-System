@@ -40,7 +40,6 @@ public class Staff {
 
     private String designation;
     private String city;
-    private String officeLocation;
 
     private boolean active = true;
 

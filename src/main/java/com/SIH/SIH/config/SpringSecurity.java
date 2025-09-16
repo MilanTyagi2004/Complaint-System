@@ -1,10 +1,12 @@
 package com.SIH.SIH.config;
 
 import com.SIH.SIH.filter.JwtFilter;
+import com.SIH.SIH.services.StaffDetailServiceImpl;
 import com.SIH.SIH.services.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,9 +22,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurity {
     @Autowired
     private JwtFilter jwtFilter;
+    private final StaffDetailServiceImpl staffDetailService;
     private final UserDetailServiceImpl userDetailServiceIMPL;
 
-    public SpringSecurity(UserDetailServiceImpl userDetailServiceIMPL){
+    public SpringSecurity(StaffDetailServiceImpl staffDetailService, UserDetailServiceImpl userDetailServiceIMPL){
+        this.staffDetailService = staffDetailService;
+
         this.userDetailServiceIMPL = userDetailServiceIMPL;
     }
 
@@ -31,10 +36,19 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
+    @Bean(name = "userAuthenticationManager")
+    @Primary
+    public AuthenticationManager userAuthenticationManager() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService((UserDetailsService) userDetailServiceIMPL);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(authProvider);
+    }
+
+    @Bean(name = "staffAuthenticationManager")
+    public AuthenticationManager staffAuthenticationManager(){
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService((UserDetailsService) staffDetailService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
