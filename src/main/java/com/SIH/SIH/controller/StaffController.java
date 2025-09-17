@@ -2,6 +2,7 @@ package com.SIH.SIH.controller;
 
 import com.SIH.SIH.dto.StaffDto;
 import com.SIH.SIH.entity.Staff;
+import com.SIH.SIH.repostitory.StaffRepository;
 import com.SIH.SIH.services.StaffService;
 import com.SIH.SIH.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/staff")
 public class StaffController {
+
+    @Autowired
+    private StaffRepository staffRepository;
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -40,7 +46,7 @@ public class StaffController {
             staff.setDepartment(staffDto.getDepartment());
             staff.setCity(staffDto.getCity());
             staff.setDesignation(staffDto.getDesignation());
-            staffService.saveNewUser(staff);
+            staffService.saveUser(staff);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -58,5 +64,47 @@ public class StaffController {
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?>deleteStaffUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getName().equals("anonymousUser")){
+            return new ResponseEntity<>("User is unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        String email = authentication.getName();
+        staffRepository.deleteByEmail(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("update/email")
+    public ResponseEntity<?> updateEmail(@RequestBody Staff staff){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getName().equals("anonymousUser")){
+            return new ResponseEntity<>("User not authenticated",HttpStatus.UNAUTHORIZED);
+        }
+        String email = authentication.getName();
+        Staff staffInDb = staffRepository.findByEmail(email);
+        if(staffInDb==null){
+            return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
+        }
+        staffInDb.setEmail(staff.getEmail());
+        staffService.saveUser(staffInDb);
+        return new ResponseEntity<>(staffInDb,HttpStatus.OK);
+    }
+    @PutMapping("update/password")
+    public ResponseEntity<?> updatepassword(@RequestBody Staff staff){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getName().equals("anonymousUser")){
+            return new ResponseEntity<>("user not authenticate",HttpStatus.UNAUTHORIZED);
+        }
+        String email = authentication.getName();
+        Staff staffInDb = staffRepository.findByEmail(email);
+        if(staffInDb==null){
+            return new ResponseEntity<>("user not found",HttpStatus.NOT_FOUND);
+        }
+        staffInDb.setPassword(staff.getPassword());
+        staffService.saveUpdatePassword(staffInDb);
+        return new ResponseEntity<>(staffInDb,HttpStatus.OK);
     }
 }
