@@ -93,7 +93,7 @@ public class StaffController {
         return new ResponseEntity<>(staffInDb,HttpStatus.OK);
     }
     @PutMapping("update/password")
-    public ResponseEntity<?> updatepassword(@RequestBody Staff staff){
+    public ResponseEntity<?> updatePassword(@RequestBody Staff staff){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication.getName().equals("anonymousUser")){
             return new ResponseEntity<>("user not authenticate",HttpStatus.UNAUTHORIZED);

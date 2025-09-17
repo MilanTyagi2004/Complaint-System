@@ -23,6 +23,7 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteByEmail(){
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if(authentication.getName().equals("anonymousUser")) {
                 return new ResponseEntity<>("User Not authenticate", HttpStatus.UNAUTHORIZED);
@@ -64,7 +65,7 @@ public class UserController {
         userService.saveUserPassword(userInDb);
         return new ResponseEntity<>(userInDb,HttpStatus.OK);
     }
-    @PutMapping("update/password")
+    @PutMapping("update/phoneNumber")
     public ResponseEntity<?> updatePhoneNumber(@RequestBody User user){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication.getName().equals("anonymousUser")){
