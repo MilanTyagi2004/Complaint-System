@@ -1,6 +1,4 @@
 package com.SIH.SIH.entity;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,10 +28,7 @@ public class Complaint {
     private String city;
 
     @NonNull
-    private String district;
-    @NonNull
     private String state;
-
 
     @NonNull
     private String description;
@@ -50,7 +45,6 @@ public class Complaint {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
 
     private String userId;   // who raised it
     private String staffId;  // auto-assigned staff
