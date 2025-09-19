@@ -7,6 +7,7 @@ import com.SIH.SIH.repostitory.ComplaintRepository;
 import com.SIH.SIH.repostitory.StaffRepository;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.ComplaintService;
+import com.SIH.SIH.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,8 @@ public class UserComplaintController {
 
     @Autowired
     private StaffRepository staffRepository;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/newComplaint")
     public ResponseEntity<?> newComplain(@RequestBody ComplaintDto complaintDto){
@@ -54,6 +57,7 @@ public class UserComplaintController {
             complaint.setUserId(userId);
             complaint = complaintService.autoSignoff(complaint);
             complaintService.saveComplaint(complaint);
+            emailService.sendEmail(email,"new complaint","created regarding to the "+ complaintDto.getDepartment()+ " issue");
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
