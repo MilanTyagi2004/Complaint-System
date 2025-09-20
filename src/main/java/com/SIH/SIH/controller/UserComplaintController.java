@@ -45,6 +45,9 @@ public class UserComplaintController {
         if(userInDb==null){
             return new ResponseEntity<>("user not found", HttpStatus.NOT_FOUND);
         }
+        if(!userInDb.isVerified()){
+            return new ResponseEntity<>("verify phone number ",HttpStatus.NOT_ACCEPTABLE);
+        }
         String userId = userInDb.getId();
         try{
             Complaint complaint = new Complaint();

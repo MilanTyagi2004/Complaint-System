@@ -17,6 +17,11 @@ spring:
           starttls:
             enable: true
 
+twilio:
+  accountSid: ${TWILIO_ACCOUNT_SID:AC3f6c8870b76c280c69a7a971b9ce4777}
+  authToken: ${TWILIO_AUTH_TOKEN:bc6dfb89a36b8b92d4db057391a96cf5}
+  trialNumber: ${TWILIO_TRIAL_NUMBER:+12272380745}
+
 management:
   endpoints:
     web:

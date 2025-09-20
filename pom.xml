@@ -65,6 +65,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!-- pom.xml -->
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>10.6.3</version> <!-- Latest as of 2025 -->
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -87,7 +95,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>24.1.0</version>
             <scope>compile</scope>
         </dependency>
 
