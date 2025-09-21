@@ -73,7 +73,7 @@ public class PublicController {
         @ApiResponse(responseCode = "401", description = "Invalid credentials"),
         @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<Map<String, Object>> signIn(@Valid @RequestBody UserDto user) {
+    public ResponseEntity<Map<String, Object>> signIn(@RequestBody UserDto user) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );

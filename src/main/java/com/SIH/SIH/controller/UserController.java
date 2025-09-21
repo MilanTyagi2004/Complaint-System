@@ -98,7 +98,7 @@ public class UserController {
         @ApiResponse(responseCode = "401", description = "Unauthorized access"),
         @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<Map<String, String>> updatePassword(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<Map<String, String>> updatePassword(@RequestBody UserDto userDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication == null || authentication.getName().equals("anonymousUser")) {
