@@ -33,7 +33,7 @@ public class OtpController {
         String email = authentication.getName();
 
         User userInDb = userRepository.findByEmail(email);
-        String phoneNumber = userInDb.getMobileNumber();
+        String phoneNumber = userInDb.getPhoneNumber();
         String formattedNumber = "+91" + phoneNumber;
 
         String otp = OtpUtil.generateOtp();
@@ -48,7 +48,7 @@ public class OtpController {
         String email = authentication.getName();
 
         User userInDb = userRepository.findByEmail(email);
-        String phoneNumber = userInDb.getMobileNumber();
+        String phoneNumber = userInDb.getPhoneNumber();
         String formattedNumber = "+91" + phoneNumber;
 
         String storedOtp = otpStorage.get(formattedNumber);

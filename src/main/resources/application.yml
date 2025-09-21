@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017
-      database: SIH_innovation
+      database: Complaint_system
       auto-indexing: true
 
   mail:

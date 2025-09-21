@@ -1,7 +1,6 @@
 package com.SIH.SIH.config;
 
 import com.SIH.SIH.filter.JwtFilter;
-import com.SIH.SIH.services.StaffDetailServiceImpl;
 import com.SIH.SIH.services.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurity {
     @Autowired
     private JwtFilter jwtFilter;
-    private final StaffDetailServiceImpl staffDetailService;
     private final UserDetailServiceImpl userDetailServiceIMPL;
 
-    public SpringSecurity(StaffDetailServiceImpl staffDetailService, UserDetailServiceImpl userDetailServiceIMPL){
-        this.staffDetailService = staffDetailService;
+    public SpringSecurity(UserDetailServiceImpl userDetailServiceIMPL){
 
         this.userDetailServiceIMPL = userDetailServiceIMPL;
     }
@@ -36,23 +33,13 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean(name = "userAuthenticationManager")
-    @Primary
-    public AuthenticationManager userAuthenticationManager() {
+    @Bean
+    public AuthenticationManager AuthenticationManager() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService((UserDetailsService) userDetailServiceIMPL);
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
-
-    @Bean(name = "staffAuthenticationManager")
-    public AuthenticationManager staffAuthenticationManager(){
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService((UserDetailsService) staffDetailService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(authProvider);
-    }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -70,7 +57,8 @@ public class SpringSecurity {
                         ).permitAll()
 
                         // Your application endpoints
-                        .requestMatchers("/User/**").authenticated()
+                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/staff/**").hasRole("STAFF")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 );

@@ -2,11 +2,10 @@ package com.SIH.SIH.controller;
 
 import com.SIH.SIH.dto.UserDto;
 import com.SIH.SIH.entity.User;
+import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.UserService;
 import com.SIH.SIH.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,24 +24,20 @@ public class PublicController {
     private JwtUtil jwtUtil;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    @Autowired
-    @Qualifier("userAuthenticationManager")
+    @Autowired()
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody UserDto user){
+    public ResponseEntity<?> signup(@RequestBody UserDto userDto){
         try{
-            User user1 = new User();
-            user1.setFirstName(user.getFirstName());
-            user1.setLastName(user.getLastName());
-            user1.setEmail(user.getEmail());
-            user1.setPassword(passwordEncoder.encode(user.getPassword()));
-            user1.setMobileNumber(user.getMobileNumber());
-            userService.saveUser(user1);
+            User user = userService.saveUser(userDto);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(user,HttpStatus.OK);
+        return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -51,7 +46,9 @@ public class PublicController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
             );
-            String token = jwtUtil.generateToken(user.getEmail(),"USER");
+            User user1 = userRepository.findByEmail(user.getEmail());
+            if(user1==null)return new ResponseEntity<>("user not found",HttpStatus.NOT_FOUND);
+            String token = jwtUtil.generateToken(user.getEmail(),user1.getRole().name());
             return new ResponseEntity<>(token, HttpStatus.OK);
         }catch (BadCredentialsException e){
             return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);

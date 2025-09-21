@@ -1,5 +1,6 @@
 package com.SIH.SIH.controller;
 
+import com.SIH.SIH.dto.UserDto;
 import com.SIH.SIH.entity.User;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.UserService;
@@ -34,19 +35,23 @@ public class UserController {
     }
 
     @PutMapping("/update/email")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication.getName().equals("anonymousUser")){
-            return new ResponseEntity<>("User not authenticate",HttpStatus.UNAUTHORIZED);
+        if(authentication == null || authentication.getName().equals("anonymousUser")){
+            return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
         }
+
         String email = authentication.getName();
         User userIndb = userRepository.findByEmail(email);
         if(userIndb==null){
             return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
         }
-        userIndb.setEmail(user.getEmail());
-        userService.saveUser(userIndb);
+        userIndb.setFirstName(userDto.getFirstName());
+        userIndb.setLastName(userDto.getLastName());
+        userIndb.setEmail(userDto.getEmail());
+
+        userRepository.save(userIndb);
         return new ResponseEntity<>(userIndb, HttpStatus.OK);
     }
     @PutMapping("update/password")
@@ -63,22 +68,6 @@ public class UserController {
         }
         userInDb.setPassword(user.getPassword());
         userService.saveUserPassword(userInDb);
-        return new ResponseEntity<>(userInDb,HttpStatus.OK);
-    }
-    @PutMapping("update/phoneNumber")
-    public ResponseEntity<?> updatePhoneNumber(@RequestBody User user){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication.getName().equals("anonymousUser")){
-            return new ResponseEntity<>("User not authenticated",HttpStatus.UNAUTHORIZED);
-        }
-        String email = authentication.getName();
-        User userInDb = userRepository.findByEmail(email);
-
-        if(userInDb ==null){
-            return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
-        }
-        userInDb.setMobileNumber(user.getMobileNumber());
-        userService.saveUser(userInDb);
         return new ResponseEntity<>(userInDb,HttpStatus.OK);
     }
 }
