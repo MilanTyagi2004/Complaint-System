@@ -4,7 +4,6 @@ import com.SIH.SIH.entity.Role;
 import com.SIH.SIH.entity.User;
 import com.SIH.SIH.exception.ResourceNotFoundException;
 import com.SIH.SIH.repostitory.UserRepository;
-import com.SIH.SIH.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

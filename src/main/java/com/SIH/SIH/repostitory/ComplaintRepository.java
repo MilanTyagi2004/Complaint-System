@@ -1,7 +1,6 @@
 package com.SIH.SIH.repostitory;
 
 import com.SIH.SIH.entity.Complaint;
-import com.SIH.SIH.entity.ComplaintStatus;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
