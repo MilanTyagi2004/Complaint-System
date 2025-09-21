@@ -4,6 +4,7 @@ import com.SIH.SIH.dto.UserDto;
 import com.SIH.SIH.entity.User;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name ="User APIs",description = "Delete User,update user email and password")
 public class UserController {
 
     @Autowired

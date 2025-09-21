@@ -4,6 +4,7 @@ import com.SIH.SIH.entity.User;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.SmsService;
 import com.SIH.SIH.util.OtpUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("otp")
+@Tag(name ="OTP APIs",description = "generate otp,verify otp")
 public class OtpController {
     @Autowired
     private UserRepository userRepository;

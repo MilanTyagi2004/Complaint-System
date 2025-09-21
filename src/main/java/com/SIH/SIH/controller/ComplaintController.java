@@ -6,6 +6,7 @@ import com.SIH.SIH.repostitory.ComplaintRepository;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.ComplaintService;
 import com.SIH.SIH.services.EmailService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name ="Complaint APIs",description = "new complaint,get complaint,delete complain,get complaint by ID")
 public class ComplaintController {
     @Autowired
     private ComplaintService complaintService;

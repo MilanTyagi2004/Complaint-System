@@ -1,5 +1,6 @@
 package com.SIH.SIH.exception;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -22,6 +23,13 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ResponseEntity<String> handleRateLimiter(RequestNotPermitted ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body("⚠️ Too many requests - please try again later.");
     }
 
     @ExceptionHandler(RuntimeException.class)

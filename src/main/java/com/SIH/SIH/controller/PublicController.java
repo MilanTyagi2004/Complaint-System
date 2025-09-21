@@ -5,6 +5,7 @@ import com.SIH.SIH.entity.User;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.UserService;
 import com.SIH.SIH.util.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/public")
+@Tag(name ="Public APIs",description = "login,Create new user")
 public class PublicController {
 
     @Autowired
