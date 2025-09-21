@@ -10,4 +10,6 @@ import java.util.List;
 public interface ComplaintRepository extends MongoRepository<Complaint,String> {
     List<Complaint> findByUserId(String userId);
     void deleteById(@NotNull String id);
+
+    List<Complaint> findByStaffId(String StaffId);
 }

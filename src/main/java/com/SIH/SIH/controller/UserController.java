@@ -2,10 +2,15 @@ package com.SIH.SIH.controller;
 
 import com.SIH.SIH.dto.UserDto;
 import com.SIH.SIH.entity.User;
+import com.SIH.SIH.exception.ResourceNotFoundException;
+import com.SIH.SIH.exception.UnauthorizedException;
 import com.SIH.SIH.repostitory.UserRepository;
 import com.SIH.SIH.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.tomcat.util.http.parser.HttpParser;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +18,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
-@Tag(name ="User APIs",description = "Delete User,update user email and password")
+@Tag(name ="User APIs",description = "User profile management endpoints")
 public class UserController {
 
     @Autowired
@@ -25,51 +33,91 @@ public class UserController {
     private UserService userService;
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteByEmail(){
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(authentication.getName().equals("anonymousUser")) {
-                return new ResponseEntity<>("User Not authenticate", HttpStatus.UNAUTHORIZED);
-
-            }
-            userRepository.deleteByEmail(authentication.getName());
-            return new ResponseEntity<>(HttpStatus.OK);
+    @Operation(summary = "Delete user account", description = "Delete the authenticated user's account")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User deleted successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized access"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<Map<String, String>> deleteByEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || authentication.getName().equals("anonymousUser")) {
+            throw new UnauthorizedException("User not authenticated");
+        }
+        
+        User user = userRepository.findByEmail(authentication.getName());
+        if (user == null) {
+            throw new ResourceNotFoundException("User", "email", authentication.getName());
+        }
+        
+        userRepository.deleteByEmail(authentication.getName());
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User account deleted successfully");
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/update/email")
-    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto){
+    @PutMapping("/update/profile")
+    @Operation(summary = "Update user profile", description = "Update user's personal information")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Profile updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized access"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<User> updateUser(@Valid @RequestBody UserDto userDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || authentication.getName().equals("anonymousUser")){
-            return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
+        if (authentication == null || authentication.getName().equals("anonymousUser")) {
+            throw new UnauthorizedException("User not authenticated");
         }
 
         String email = authentication.getName();
-        User userIndb = userRepository.findByEmail(email);
-        if(userIndb==null){
-            return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
+        User userInDb = userRepository.findByEmail(email);
+        if (userInDb == null) {
+            throw new ResourceNotFoundException("User", "email", email);
         }
-        userIndb.setFirstName(userDto.getFirstName());
-        userIndb.setLastName(userDto.getLastName());
-        userIndb.setEmail(userDto.getEmail());
+        
+        userInDb.setFirstName(userDto.getFirstName());
+        userInDb.setLastName(userDto.getLastName());
+        userInDb.setEmail(userDto.getEmail());
+        userInDb.setPhoneNumber(userDto.getPhoneNumber());
+        userInDb.setCity(userDto.getCity());
 
-        userRepository.save(userIndb);
-        return new ResponseEntity<>(userIndb, HttpStatus.OK);
+        User updatedUser = userRepository.save(userInDb);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-    @PutMapping("update/password")
-    public ResponseEntity<?> updatePassword(@RequestBody User user){
+    
+    @PutMapping("/update/password")
+    @Operation(summary = "Update password", description = "Update user's password")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Password updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid password format"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized access"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<Map<String, String>> updatePassword(@Valid @RequestBody UserDto userDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication.getName().equals("anonymousUser")){
-            return new ResponseEntity<>("User not authenticated",HttpStatus.UNAUTHORIZED);
+        
+        if (authentication == null || authentication.getName().equals("anonymousUser")) {
+            throw new UnauthorizedException("User not authenticated");
         }
+        
         String email = authentication.getName();
         User userInDb = userRepository.findByEmail(email);
 
-        if(userInDb ==null){
-            return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
+        if (userInDb == null) {
+            throw new ResourceNotFoundException("User", "email", email);
         }
-        userInDb.setPassword(user.getPassword());
+        
+        userInDb.setPassword(userDto.getPassword());
         userService.saveUserPassword(userInDb);
-        return new ResponseEntity<>(userInDb,HttpStatus.OK);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Password updated successfully");
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

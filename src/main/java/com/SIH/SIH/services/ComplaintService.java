@@ -79,11 +79,14 @@ public class ComplaintService {
     public List<Complaint> getAllComplaint(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
+        if(email.equals("anonymousUser")){
+            throw new RuntimeException("user not authenticate");
+        }
         User userInDb = userRepository.findByEmail(email);
         if(userInDb==null){
             throw new RuntimeException("User not found");        }
 
-        return complaintRepository.findByUserId(userInDb.getId());
+        return complaintRepository.findByStaffId(userInDb.getId());
     }
 
     public Complaint getComplaint(String complaintId) {

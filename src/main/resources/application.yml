@@ -8,8 +8,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: milantyagi2004@gmail.com
-    password: ypak lduv egwu stqk
+    username:  ${MAIL_USERNAME}
+    password:  ${MAIL_PASSWORD}  #ypak lduv egwu stqk
     properties:
       mail:
         smtp:
@@ -18,9 +18,9 @@ spring:
             enable: true
 
 twilio:
-  accountSid: ${TWILIO_ACCOUNT_SID:AC3f6c8870b76c280c69a7a971b9ce4777}
-  authToken: ${TWILIO_AUTH_TOKEN:bc6dfb89a36b8b92d4db057391a96cf5}
-  trialNumber: ${TWILIO_TRIAL_NUMBER:+12272380745}
+  accountSid: ${TWILIO_ACCOUNT_SID}
+  authToken: ${TWILIO_AUTH_TOKEN}
+  trialNumber: ${TWILIO_TRIAL_NUMBER}
 
 management:
   endpoints:
@@ -30,3 +30,11 @@ management:
   health:
     mongo:
       enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    url: /v3/api-docs
+    path: /swagger-ui.html
+

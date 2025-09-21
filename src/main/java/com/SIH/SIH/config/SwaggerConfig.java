@@ -18,8 +18,8 @@ import java.util.List;
 public class SwaggerConfig {
     @Bean
     public OpenAPI customconfig(){
-        return new OpenAPI().info(new Info().title("Complaint app APIs ")
-                        .description("this is Complaint system ")
+        return new OpenAPI().info(new Info().title("Complaint System")
+                        .description("Complaint app APIs")
                 ).servers(List.of(new Server().url("http://localhost:8080/").description("normal server"),
                         new Server().url("http://localhost:8081").description(" production server"))
                 ).addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
