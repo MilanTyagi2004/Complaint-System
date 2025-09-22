@@ -1,0 +1,43 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: Complaint_system_test
+      auto-indexing: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: test@example.com
+    password: test-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+twilio:
+  accountSid: test-sid
+  authToken: test-token
+  trialNumber: +1234567890
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    mongo:
+      enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    url: /v3/api-docs
+    path: /swagger-ui.html
+
+# JWT Configuration for Testing
+jwt:
+  secret: test-secret-key-for-testing-only

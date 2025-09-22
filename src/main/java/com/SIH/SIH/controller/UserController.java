@@ -111,10 +111,15 @@ public class UserController {
         if (userInDb == null) {
             throw new ResourceNotFoundException("User", "email", email);
         }
-        
-        userInDb.setPassword(userDto.getPassword());
-        userService.saveUserPassword(userInDb);
-        
+        // Validate input password first
+        String newPassword = userDto.getPassword();
+        if (newPassword == null) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
+
+        // Let the service handle encoding and saving
+        userService.saveUserPassword(userInDb, newPassword);
+
         Map<String, String> response = new HashMap<>();
         response.put("message", "Password updated successfully");
         
