@@ -25,7 +25,7 @@ public class UserTestDataBuilder {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setEmail("john.doe@example.com");
-        user.setPassword("encodedPassword");
+        user.setPassword("Test@123");
         user.setPhoneNumber("9876543210");
         user.setRole(Role.USER);
         user.setCity("noida");

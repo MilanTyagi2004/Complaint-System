@@ -11,11 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,19 +29,19 @@ class PublicControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private UserRepository userRepository;
 
-    @MockBean
+    @MockitoBean
     private JwtUtil jwtUtil;
 
-    @MockBean
+    @MockitoBean
     private BCryptPasswordEncoder passwordEncoder;
 
-    @MockBean
+    @MockitoBean
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -61,7 +61,6 @@ class PublicControllerTest {
         // Given
         when(userRepository.findByEmail(anyString())).thenReturn(null);
         when(userService.saveUser(any(UserDto.class))).thenReturn(validUser);
-
         // When & Then
         mockMvc.perform(post("/public/signup")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,6 +106,8 @@ class PublicControllerTest {
         loginDto.setPassword("Test@123");
         
         when(userRepository.findByEmail(anyString())).thenReturn(validUser);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
         when(jwtUtil.generateToken(anyString(), anyString())).thenReturn("test-jwt-token");
 
         // When & Then

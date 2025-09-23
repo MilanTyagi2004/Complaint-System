@@ -9,13 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -28,6 +27,8 @@ class UserIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -97,10 +98,10 @@ class UserIntegrationTest {
     void login_WithValidCredentials_ShouldReturnToken() throws Exception {
         // Given - Create user first
         User user = UserTestDataBuilder.createValidUser();
+        user.setPassword(passwordEncoder.encode("Test@123"));
         userRepository.save(user);
 
         UserDto loginDto = UserTestDataBuilder.createUserDto();
-        loginDto.setPassword("Test@123");
 
         // When & Then
         mockMvc.perform(post("/public/login")
