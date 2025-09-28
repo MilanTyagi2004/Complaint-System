@@ -1,4 +1,4 @@
-# SIH Complaint Management System
+# Complaint Management System
 
 A comprehensive **Complaint Management System** built with Spring Boot 3.5.5, MongoDB, and JWT authentication. This system allows users to submit complaints, staff to manage them, and admins to oversee the entire process.
 
