@@ -4,15 +4,18 @@ import com.SIH.SIH.builder.ComplaintTestDataBuilder;
 import com.SIH.SIH.dto.ComplaintDto;
 import com.SIH.SIH.entity.Complaint;
 import com.SIH.SIH.services.ComplaintService;
+import com.SIH.SIH.services.UserDetailServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +25,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ComplaintController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class ComplaintControllerTest {
 
     @Autowired
@@ -30,6 +35,9 @@ class ComplaintControllerTest {
 
     @MockitoBean
     private ComplaintService complaintService;
+
+    @MockitoBean
+    private UserDetailServiceImpl userDetailService;
 
     @Autowired
     private ObjectMapper objectMapper;
